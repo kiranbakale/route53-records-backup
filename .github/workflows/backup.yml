@@ -47,9 +47,13 @@ jobs:
       run: |
         pwd
         ls
-        git config --global user.name 'kiranbakale'
-        git config --global user.email 'kiranbakale9@gmail.com'
+        git config user.name github-actions[bot]
+        git config user.email github-actions[bot]@users.noreply.github.com
         git add .
         git commit -m "route53-backup"
-        git push https://${{ secrets.GH_TOKEN }}@github.com/kiranbakale/route53-records-backup.git
     
+     - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          branch: ${{ github.ref }}
