@@ -51,4 +51,5 @@ jobs:
         git config --global user.email 'kiranbakale9@gmail.com'
         git add .
         git commit -am "route53-backup"
+        git remote set-url origin https://kiranbakale:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
         git push
