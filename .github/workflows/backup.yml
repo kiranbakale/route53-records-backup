@@ -1,12 +1,9 @@
 ---
 name: route53-records-backup
 on:
-  push:
-    branches:
-      - main
   schedule:
-    - cron: '* * * * *'
-  workflow_dispatch: null
+    - cron: "* * * * *"
+
 jobs:
   backup-route53-records:
     name: backup-route53-records
