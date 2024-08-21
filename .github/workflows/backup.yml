@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: * * * * *
+    - cron: '* * * * *'
   workflow_dispatch: null
 jobs:
   backup-route53-records:
