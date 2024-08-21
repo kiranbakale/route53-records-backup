@@ -43,10 +43,12 @@ jobs:
         ls
 
 
-    - name: Commit and Push Backup
+    - name: Commit and Push Backup file to repo
       run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add route53-backups/
-        git commit -m "Route 53 backup on ${{ github.event.repository.default_branch }} at $timestamp"
-        git push origin ${{ github.event.repository.default_branch }}
+        pwd
+        ls
+        git config --global user.name 'kiranbakale'
+        git config --global user.email 'kiranbakale@users.noreply.github.com'
+        git add .
+        git commit -am "route53-backup"
+        git push
