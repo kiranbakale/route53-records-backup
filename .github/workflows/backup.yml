@@ -37,17 +37,16 @@ jobs:
         mkdir -p route53-backups
         timestamp=$(date +"%Y%m%d-%H%M%S")
         backup_file="route53-backups/route53-backup-${timestamp}.json"
-        aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }}
         aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
         ls
         cd route53-backups
         ls
 
 
-    # - name: Commit and Push Backup
-    #   run: |
-    #     git config --global user.name "github-actions[bot]"
-    #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-    #     git add route53-backups/
-    #     git commit -m "Route 53 backup on ${{ github.event.repository.default_branch }} at $timestamp"
-    #     git push origin ${{ github.event.repository.default_branch }}
+    - name: Commit and Push Backup
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add route53-backups/
+        git commit -m "Route 53 backup on ${{ github.event.repository.default_branch }} at $timestamp"
+        git push origin ${{ github.event.repository.default_branch }}
