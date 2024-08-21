@@ -1,58 +1,57 @@
+---
 name: route53-records-backup
-
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   schedule:
-    - cron: '0 0 * * *'  # Runs every 24 hours at midnight UTC
-  workflow_dispatch:
-
+    - cron: 0 0 * * *
+  workflow_dispatch: null
 jobs:
   backup-route53-records:
     name: backup-route53-records
     runs-on: ubuntu-24.04
-
-    permissions: 
-      contents: 'read'
-      id-token: 'write'
-
+    permissions:
+      contents: read
+      id-token: write
     env:
       REGION: ${{ secrets.aws_region }}
       IAM_ROLE: ${{ secrets.iam_role }}
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: github-actions-federation
+          aws-region: ${{ env.REGION }}
+      - name: Take Route 53 Backup
+        run: >
+          aws sts get-caller-identity
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        role-to-assume: ${{ env.IAM_ROLE }}
-        role-session-name: github-actions-federation
-        aws-region: ${{ env.REGION }}
+          mkdir -p route53-backups
 
-    - name: Take Route 53 Backup
-      run: |
-        aws sts get-caller-identity
-        mkdir -p route53-backups
-        timestamp=$(date +"%Y%m%d-%H%M%S")
-        backup_file="route53-backups/route53-backup-${timestamp}.json"
-        aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
-        ls
-        cd route53-backups
-        ls
+          timestamp=$(date +"%Y%m%d-%H%M%S")
 
+          backup_file="route53-backups/route53-backup-${timestamp}.json"
 
-    - name: Commit and Push Backup json-file to repo
-      run: |
-        pwd
-        ls
-        git config user.name github-actions[bot]
-        git config user.email github-actions[bot]@users.noreply.github.com
-        git add .
-        git commit -m "route53-backup"
-    
-     - name: Push changes
+          aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
+
+          ls
+
+          cd route53-backups
+
+          ls
+      - name: Commit and Push Backup json-file to repo
+        run: |
+          pwd
+          ls
+          git config user.name github-actions[bot]
+          git config user.email github-actions[bot]@users.noreply.github.com
+          git add .
+          git commit -m "route53-backup"
+      - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GH_TOKEN }}
