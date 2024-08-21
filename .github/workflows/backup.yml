@@ -40,7 +40,8 @@ jobs:
         aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
         ls
         cd route53-backups
-        ls
+        cat route53-backup-20240821-100913.json
+
 
     # - name: Commit and Push Backup
     #   run: |
