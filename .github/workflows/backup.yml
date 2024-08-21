@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: 0 0 * * *
+    - cron: * * * * *
   workflow_dispatch: null
 jobs:
   backup-route53-records:
@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
