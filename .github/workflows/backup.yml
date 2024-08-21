@@ -43,7 +43,7 @@ jobs:
         ls
 
 
-    - name: Commit and Push Backup file to repo
+    - name: Commit and Push Backup json-file to repo
       run: |
         pwd
         ls
