@@ -48,11 +48,8 @@ jobs:
         pwd
         ls
         git config --global user.name 'kiranbakale'
+        git config --global user.email 'kiranbakale9@gmail.com'
         git add .
-        git commit -am "route53-backup"
-
-    - name: Push changes # push the output folder to your repo
-      uses: ad-m/github-push-action@master
-      with:
-         github_token: ${{ secrets.GH_TOKEN }}
-         force: true
+        git commit -m "route53-backup"
+        git push https://${{ secrets.GH_TOKEN }}@github.com/kiranbakale/route53-records-backup.git
+    
