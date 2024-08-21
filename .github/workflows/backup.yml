@@ -21,14 +21,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ env.IAM_ROLE }}
           role-session-name: github-actions-federation
           aws-region: ${{ env.REGION }}
+
       - name: Take Route 53 Backup
-        run: >
+        run: |
           aws sts get-caller-identity
 
           mkdir -p route53-backups
@@ -44,6 +46,7 @@ jobs:
           cd route53-backups
 
           ls
+
       - name: Commit and Push Backup json-file to repo
         run: |
           pwd
@@ -52,6 +55,7 @@ jobs:
           git config user.email github-actions[bot]@users.noreply.github.com
           git add .
           git commit -m "route53-backup"
+
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
