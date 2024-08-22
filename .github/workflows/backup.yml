@@ -40,7 +40,7 @@ jobs:
 
           backup_file="route53-backups/route53-backup-${timestamp}.json"
 
-          aws route53 list-resource-record-setss --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
+          aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
 
           ls
 
@@ -86,16 +86,15 @@ jobs:
           role-session-name: github-actions-federation
           aws-region: ${{ env.REGION }}
 
-      - name: Send Success Notification
-        if: success()
+      - name: Send Notification
+        if: always()
         run: |
-          aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
-          --subject "Route 53 Backup Successful" \
-          --message "The Route 53 backup was successfully completed and committed to the repository." --debug
-
-      - name: Send Failure Notification
-        if: failure()
-        run: |
-          aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
-          --subject "Route 53 Backup Failed" \
-          --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details." --debug
+          if [ "${{ needs.backup-route53-records.result }}" == "success" ]; then
+            aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
+              --subject "Route 53 Backup Successful" \
+              --message "The Route 53 backup was successfully completed and committed to the repository."
+          else
+            aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
+              --subject "Route 53 Backup Failed" \
+              --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details."
+          fi
