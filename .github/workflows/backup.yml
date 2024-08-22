@@ -72,11 +72,11 @@ jobs:
         run: |
           aws sns publish --topic-arn ${{ secrets.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Successful" \
-          --message "The Route 53 backup was successfully completed and committed to the repository."
+          --message "The Route 53 backup was successfully completed and committed to the repository." --debug
 
       - name: Send Failure Notification
         if: failure()
         run: |
           aws sns publish --topic-arn ${{ secrets.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Failed" \
-          --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details."
+          --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details." --debug
