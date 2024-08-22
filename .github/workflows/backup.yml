@@ -2,7 +2,7 @@
 name: route53-records-backup
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "5 4 * * sun"
   workflow_dispatch:
 
 jobs:
