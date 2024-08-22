@@ -18,6 +18,7 @@ jobs:
     env:
       REGION: ${{ secrets.aws_region }}
       IAM_ROLE: ${{ secrets.iam_role }}
+      SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -62,6 +63,8 @@ jobs:
           github_token: ${{ secrets.GH_TOKEN }}
           branch: ${{ github.ref }}
 
+    
+  
   notify-status:
     name: Notify Backup Status
     needs: backup-route53-records
@@ -71,8 +74,18 @@ jobs:
       id-token: write
       
     env:
+      REGION: ${{ secrets.aws_region }}
+      IAM_ROLE: ${{ secrets.iam_role }}
       SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
     steps:
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: github-actions-federation
+          aws-region: ${{ env.REGION }}
+
       - name: Send Success Notification
         if: success()
         run: |
