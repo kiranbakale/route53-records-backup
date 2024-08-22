@@ -2,6 +2,9 @@ name: route53-records-backup
 on:
   schedule:
     - cron: "*/5 * * * *"
+  push:
+      branches: [ main ]
+
   workflow_dispatch:
 
 jobs:
@@ -15,7 +18,6 @@ jobs:
     env:
       REGION: ${{ secrets.aws_region }}
       IAM_ROLE: ${{ secrets.iam_role }}
-      SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -68,13 +70,13 @@ jobs:
       - name: Send Success Notification
         if: success()
         run: |
-          aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
+          aws sns publish --topic-arn ${{ secrets.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Successful" \
           --message "The Route 53 backup was successfully completed and committed to the repository."
 
       - name: Send Failure Notification
         if: failure()
         run: |
-          aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
+          aws sns publish --topic-arn ${{ secrets.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Failed" \
           --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details."
