@@ -1,0 +1,43 @@
+{
+    "ResourceRecordSets": [
+        {
+            "Name": "kiranbakale.site.",
+            "Type": "NS",
+            "TTL": 172800,
+            "ResourceRecords": [
+                {
+                    "Value": "ns-815.awsdns-37.net."
+                },
+                {
+                    "Value": "ns-1546.awsdns-01.co.uk."
+                },
+                {
+                    "Value": "ns-394.awsdns-49.com."
+                },
+                {
+                    "Value": "ns-1400.awsdns-47.org."
+                }
+            ]
+        },
+        {
+            "Name": "kiranbakale.site.",
+            "Type": "SOA",
+            "TTL": 900,
+            "ResourceRecords": [
+                {
+                    "Value": "ns-815.awsdns-37.net. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+                }
+            ]
+        },
+        {
+            "Name": "ap.kiranbakale.site.",
+            "Type": "A",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "192.0.2.235"
+                }
+            ]
+        }
+    ]
+}
