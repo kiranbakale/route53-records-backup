@@ -1,7 +1,5 @@
 name: route53-records-backup
 on:
-  schedule:
-    - cron: "*/5 * * * *"
   push:
       branches: [ main ]
 
