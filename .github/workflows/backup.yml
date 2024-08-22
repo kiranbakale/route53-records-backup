@@ -40,7 +40,7 @@ jobs:
 
           backup_file="route53-backups/route53-backup-${timestamp}.json"
 
-          aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID }} --output json > $backup_file
+          aws route53 list-resource-record-sets --hosted-zone-id ${{ secrets.HOSTED_ZONE_ID1 }} --output json > $backup_file
 
           ls
 
