@@ -71,4 +71,4 @@ jobs:
         run: |
           aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Failed" \
-          --message "The Route 53 backup failed. Please check the GitHub Actions logs for more details."
+          --message "The Route 53 backup failed!!. Please check the GitHub Actions logs for more details."
