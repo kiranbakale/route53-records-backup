@@ -1,0 +1,43 @@
+{
+    "ResourceRecordSets": [
+        {
+            "Name": "ashishsarawad.cloud.",
+            "Type": "NS",
+            "TTL": 172800,
+            "ResourceRecords": [
+                {
+                    "Value": "ns-344.awsdns-43.com."
+                },
+                {
+                    "Value": "ns-986.awsdns-59.net."
+                },
+                {
+                    "Value": "ns-1184.awsdns-20.org."
+                },
+                {
+                    "Value": "ns-1961.awsdns-53.co.uk."
+                }
+            ]
+        },
+        {
+            "Name": "ashishsarawad.cloud.",
+            "Type": "SOA",
+            "TTL": 900,
+            "ResourceRecords": [
+                {
+                    "Value": "ns-344.awsdns-43.com. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
+                }
+            ]
+        },
+        {
+            "Name": "ap.ashishsarawad.cloud.",
+            "Type": "A",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "192.0.3.246"
+                }
+            ]
+        }
+    ]
+}
