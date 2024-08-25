@@ -4,7 +4,7 @@ on:
     branches: [ main ]
   schedule:
     - cron: '30 05 * * *'
-
+    
   workflow_dispatch:
 
 jobs:
@@ -35,28 +35,26 @@ jobs:
         run: |
           aws sts get-caller-identity
 
-          mkdir -p route53-backups
-
           timestamp=$(date +"%Y%m%d-%H%M%S")
+          base_folder="sw-api-nonprod-${timestamp}"
+          mkdir -p "${base_folder}"
 
           hosted_zone_ids=$(aws route53 list-hosted-zones --query 'HostedZones[*].Id' --output text)
 
           for zone_id in $hosted_zone_ids; do
             zone_id_trimmed=$(echo $zone_id | awk -F'/' '{print $3}')
-            backup_file="route53-backups/route53-backup-${zone_id_trimmed}-${timestamp}.json"
-            aws route53 list-resource-record-sets --hosted-zone-id $zone_id_trimmed --output json > $backup_file
+            backup_file="${base_folder}/${zone_id_trimmed}-${timestamp}.json"
+            aws route53 list-resource-record-sets --hosted-zone-id $zone_id_trimmed --output json > "$backup_file"
           done
 
-          ls route53-backups
+          ls "${base_folder}"
 
       - name: Commit and Push Backup json-files to repo
         run: |
-          pwd
-          ls
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-          git add .
-          git commit -m "route53-backup"
+          git add "${base_folder}"
+          git commit -m "Route53 backup on ${timestamp}"
           git push origin ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,11 +64,11 @@ jobs:
         run: |
           aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Successful" \
-          --message "The Route 53 backup was successfully completed and committed to the repository."
+          --message "The Route 53 backup was successfully completed and committed to the repository on ${timestamp}."
 
       - name: Send Failure Notification
         if: failure()
         run: |
           aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
           --subject "Route 53 Backup Failed" \
-          --message "The Route 53 backup failed!!. Please check the GitHub Actions logs for more details."
+          --message "The Route 53 backup failed on ${timestamp}. Please check the GitHub Actions logs for more details."
