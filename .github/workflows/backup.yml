@@ -53,7 +53,7 @@ jobs:
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
-          git add "${base_folder}"
+          git add .
           git commit -m "Route53 backup on ${timestamp}"
           git push origin ${{ github.ref }}
         env:
