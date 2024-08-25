@@ -36,7 +36,7 @@ jobs:
           aws sts get-caller-identity
 
           timestamp=$(date +"%Y%m%d-%H%M%S")
-          base_folder="sw-api-nonprod-${timestamp}"
+          base_folder="route53-records-backups/sw-api-nonprod-${timestamp}"
           mkdir -p "${base_folder}"
 
           hosted_zone_ids=$(aws route53 list-hosted-zones --query 'HostedZones[*].Id' --output text)
