@@ -28,6 +28,16 @@
                     "Value": "ns-1351.awsdns-40.org. awsdns-hostmaster.amazon.com. 1 7200 900 1209600 86400"
                 }
             ]
+        },
+        {
+            "Name": "ap.ashishsarawad.cloud.",
+            "Type": "A",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "192.0.2.235"
+                }
+            ]
         }
     ]
 }
