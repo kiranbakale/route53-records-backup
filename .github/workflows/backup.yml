@@ -48,7 +48,7 @@ jobs:
           hosted_zones=$(aws route53 list-hosted-zones --query 'HostedZones[*].[Name]' --output text)
 
           echo "$hosted_zones" | while read -r hosted_zone_name; do
-            hosted_zone_name=$(echo $hosted_zone_name | sed 's/\.$//') # Remove trailing dot from domain name
+            hosted_zone_name=$(echo $hosted_zone_name | sed 's/\.$//')
             
             hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='${hosted_zone_name}.'].Id" --output text | awk -F'/' '{print $3}')
 
