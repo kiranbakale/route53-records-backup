@@ -1,12 +1,12 @@
-name: route53-records-backup
+name: aws-ses-sns-route53-backup
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  backup-route53-records:
-    name: backup-route53-records
+  aws-ses-sns-route53-backup:
+    name: aws-ses-sns-route53-backup
     runs-on: ubuntu-24.04
     permissions:
       contents: write
