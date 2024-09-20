@@ -1,5 +1,7 @@
 name: route53-records-backup
-    
+on:
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
