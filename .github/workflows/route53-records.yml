@@ -60,6 +60,7 @@ jobs:
       - name: Check for Changes
         id: check-changes
         run: |
+          git add .
           git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
 
       - name: Commit and Push Backup json-files to repo
