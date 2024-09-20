@@ -39,31 +39,56 @@ jobs:
         run: |
           timestamp=$(date +"%Y%m%d-%H%M%S")
           account_folder="${{ env.aws_account_name }}"
-          route53_folder="${account_folder}/route53-records"  # Updated folder path
-          mkdir -p "$route53_folder"  # Create the route53-records folder
+          route53_folder="${account_folder}/route53-records"
+          mkdir -p "$route53_folder"
 
           hosted_zones=$(aws route53 list-hosted-zones --query 'HostedZones[*].[Name]' --output text)
 
           echo "$hosted_zones" | while read -r hosted_zone_name; do
             hosted_zone_name=$(echo $hosted_zone_name | sed 's/\.$//')
-            
             hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='${hosted_zone_name}.'].Id" --output text | awk -F'/' '{print $3}')
-
-            backup_file="${route53_folder}/${hosted_zone_name}.json"  # Save JSON in the new folder
+            backup_file="${route53_folder}/${hosted_zone_name}.json"
             aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --output json > "$backup_file"
           done
 
-          ls "$route53_folder"  # List files in the route53-records folder
-
+          ls "$route53_folder"
           echo "timestamp=${timestamp}" >> $GITHUB_ENV
+
+      - name: Take SES Backup
+        id: ses-backup
+        run: |
+          ses_folder="${{ env.aws_account_name }}/ses-backup"
+          mkdir -p "$ses_folder"
+
+          aws ses list-identities --output json > "${ses_folder}/identities.json"
+
+          ls "$ses_folder"
+
+      - name: Take SNS Backup
+        id: sns-backup
+        run: |
+          sns_folder="${{ env.aws_account_name }}/sns-backup"
+          mkdir -p "$sns_folder"
+
+          aws sns list-topics --output json > "${sns_folder}/topics.json"
+          topics=$(aws sns list-topics --query 'Topics[*].TopicArn' --output text)
+          for topic in $topics; do
+            aws sns list-subscriptions-by-topic --topic-arn "$topic" --output json > "${sns_folder}/subscriptions_$(basename $topic).json"
+            aws sns get-topic-attributes --topic-arn "$topic" --output json > "${sns_folder}/attributes_$(basename $topic).json"
+          done
+
+          ls "$sns_folder"
 
       - name: Check for Changes
         id: check-changes
         run: |
-          git diff --exit-code || echo "changes_detected=true" >> $GITHUB_ENV
+          changes_detected=false
+          git diff --exit-code -- "${{ env.aws_account_name }}/route53-records/*" || echo "changes_detected=true" >> $GITHUB_ENV
+          git diff --exit-code -- "${{ env.aws_account_name }}/ses-backup/*" || echo "changes_detected=true" >> $GITHUB_ENV
+          git diff --exit-code -- "${{ env.aws_account_name }}/sns-backup/*" || echo "changes_detected=true" >> $GITHUB_ENV
 
       - name: Commit and Push Backup json-files to repo
-        # if: env.changes_detected == 'true'
+        if: env.changes_detected == 'true'
         run: |
           git config user.name github-actions[bot]
           git config user.email github-actions[bot]@users.noreply.github.com
@@ -76,14 +101,13 @@ jobs:
       - name: Notify Backup Status
         run: |
           if [ "${{ env.changes_detected }}" == "true" ]; then
-            aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
-            --subject "Route 53 Backup Successful" \
-            --message "The Route 53 backup was successfully completed and committed to the repository"
+            message="The Route 53 and SES backups were successfully completed and committed to the repository."
           else
-            aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
-            --subject "Route 53 Backup - No Changes" \
-            --message "The Route 53 backup was completed, but there were no changes to commit."
+            message="The Route 53 and SES backups were completed, but there were no changes to commit."
           fi
+          aws sns publish --topic-arn ${{ env.SNS_TOPIC_ARN }} \
+            --subject "Backup Status" \
+            --message "$message"
         env:
           SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
 
