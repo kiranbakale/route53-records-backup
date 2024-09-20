@@ -48,6 +48,16 @@
                     "Value": "192.10.89.90"
                 }
             ]
+        },
+        {
+            "Name": "o.examplenew.com.",
+            "Type": "A",
+            "TTL": 300,
+            "ResourceRecords": [
+                {
+                    "Value": "190.88.0.2"
+                }
+            ]
         }
     ]
 }
