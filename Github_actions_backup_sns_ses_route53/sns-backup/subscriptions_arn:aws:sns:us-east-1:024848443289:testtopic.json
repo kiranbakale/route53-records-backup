@@ -1,0 +1,11 @@
+{
+    "Subscriptions": [
+        {
+            "SubscriptionArn": "arn:aws:sns:us-east-1:024848443289:testtopic:07a4c1d5-0047-4b61-898e-b10dd1794904",
+            "Owner": "024848443289",
+            "Protocol": "email",
+            "Endpoint": "kiranbakale2000@gmail.com",
+            "TopicArn": "arn:aws:sns:us-east-1:024848443289:testtopic"
+        }
+    ]
+}

@@ -2,6 +2,9 @@
     "Topics": [
         {
             "TopicArn": "arn:aws:sns:us-east-1:024848443289:Route53BackupNotification"
+        },
+        {
+            "TopicArn": "arn:aws:sns:us-east-1:024848443289:testtopic"
         }
     ]
 }
