@@ -1,0 +1,11 @@
+{
+    "Subscriptions": [
+        {
+            "SubscriptionArn": "arn:aws:sns:us-east-1:024848443289:Route53BackupNotification:93256f21-2e47-4d43-bd3c-954051dc6495",
+            "Owner": "024848443289",
+            "Protocol": "email",
+            "Endpoint": "kiranbakale9@gmail.com",
+            "TopicArn": "arn:aws:sns:us-east-1:024848443289:Route53BackupNotification"
+        }
+    ]
+}
