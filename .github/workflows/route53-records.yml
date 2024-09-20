@@ -39,8 +39,8 @@ jobs:
         run: |
           timestamp=$(date +"%Y%m%d-%H%M%S")
           account_folder="${{ env.aws_account_name }}"
-          
-          mkdir -p "${account_folder}"
+          route53_folder="${account_folder}/route53-records"  # Updated folder path
+          mkdir -p "$route53_folder"  # Create the route53-records folder
 
           hosted_zones=$(aws route53 list-hosted-zones --query 'HostedZones[*].[Name]' --output text)
 
@@ -49,11 +49,11 @@ jobs:
             
             hosted_zone_id=$(aws route53 list-hosted-zones --query "HostedZones[?Name=='${hosted_zone_name}.'].Id" --output text | awk -F'/' '{print $3}')
 
-            backup_file="${account_folder}/${hosted_zone_name}.json"
+            backup_file="${route53_folder}/${hosted_zone_name}.json"  # Save JSON in the new folder
             aws route53 list-resource-record-sets --hosted-zone-id $hosted_zone_id --output json > "$backup_file"
           done
 
-          ls "${account_folder}"
+          ls "$route53_folder"  # List files in the route53-records folder
 
           echo "timestamp=${timestamp}" >> $GITHUB_ENV
 
