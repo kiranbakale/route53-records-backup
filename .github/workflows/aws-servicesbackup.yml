@@ -11,9 +11,11 @@ on:
           - prod
           - dev
 
+run-name: Deployed on the env - ${{ github.event.inputs.chosen_env }}
+
 jobs:
   aws-ses-sns-route53-backup:
-    name: Backup Workflow for ${{ github.event.inputs.chosen_env }}  # Dynamic job name based on the chosen environment
+    # name: Backup Workflow for ${{ github.event.inputs.chosen_env }}  # Dynamic job name based on the chosen environment
     runs-on: ubuntu-24.04
     permissions:
       contents: write
