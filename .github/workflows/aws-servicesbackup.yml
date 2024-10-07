@@ -1,6 +1,6 @@
 name: aws-ses-sns-route53-backup
-on:
 
+on:
   workflow_dispatch:
     inputs:
       chosen_env:
@@ -13,14 +13,12 @@ on:
 
 jobs:
   aws-ses-sns-route53-backup:
-    name: aws-ses-sns-route53-backup
+    name: Backup Workflow for ${{ github.event.inputs.chosen_env }}  # Dynamic job name based on the chosen environment
     runs-on: ubuntu-24.04
     permissions:
       contents: write
       id-token: write
 
-    run-name: deployed on the env - ${{ github.event.inputs.chosen_env }}
-  
     env:
       REGION: ${{ secrets.aws_region }}
       IAM_ROLE: ${{ secrets.iam_role }}
