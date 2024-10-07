@@ -1,4 +1,4 @@
-name: aws-ses-sns-route53-backup ${{ github.event.inputs.chosen_env }}
+name: aws-ses-sns-route53-backup
 
 on:
   workflow_dispatch:
