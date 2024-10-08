@@ -1,0 +1,50 @@
+name: aws-lambdas-backup
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+
+jobs:
+  aws-lambdas-backup:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+
+    env:
+      REGION: ${{ secrets.aws_region }}
+      IAM_ROLE: ${{ secrets.iam_role }}
+      SNS_TOPIC_ARN: ${{ secrets.SNS_TOPIC_ARN }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.IAM_ROLE }}
+          role-session-name: github-actions-federation
+          aws-region: ${{ env.REGION }}
+
+      - name: Get AWS Account Name
+        id: account-info
+        run: |
+          aws_account_name=$(aws sts get-caller-identity --query "Arn" --output text | awk -F '/' '{print $2}')
+          echo "aws_account_name=$aws_account_name" >> $GITHUB_ENV
+
+      - name: List and Backup Lambda Functions
+        run: |
+          current_date=$(date -u +"%Y-%m-%d")
+          aws lambda list-functions --query 'Functions[?starts_with(FunctionName, `prod`) == `true`].FunctionName' --output text > lambda_functions.txt
+          while read function; do
+            echo "Backing up $function"
+            aws lambda get-function --function-name $function --query 'Configuration' > "$function-config.json"
+            aws lambda get-function --function-name $function --query 'Code.Location' --output text | xargs wget -O "$function.zip"
+            aws s3 cp "$function.zip" s3://lambdas-backup/lambda-backups/"$current_date/$function.zip"
+            aws s3 cp "$function-config.json" s3://lambdas-backup/lambda-backups/"$current_date/$function-config.json"
+          done < lambda_functions.txt
